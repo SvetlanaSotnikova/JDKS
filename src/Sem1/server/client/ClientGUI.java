@@ -11,6 +11,7 @@ import java.net.Socket;
 public class ClientGUI extends JFrame {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
+    private static final String LOG_FILE = "CHAT_LOG_FILE.txt";
 
     private final JTextArea log = new JTextArea();
 
@@ -24,13 +25,14 @@ public class ClientGUI extends JFrame {
     private final JPanel panelBottom = new JPanel(new BorderLayout());
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSendMessage = new JButton("Send");
+    private final ServerWindow serverWindow;
 
-    private static final String LOG_FILE = "CHAT_LOG_FILE.txt";
     private PrintWriter logWriter;
     private BufferedReader logReader;
     private Socket socket;
-    private ServerWindow serverWindow;
     private String clientName;
+
+    private boolean isServerWorks;
 
     public ClientGUI(ServerWindow serverWindow) {
         this.serverWindow = serverWindow;
@@ -91,6 +93,7 @@ public class ClientGUI extends JFrame {
     }
 
     private void sendMessage() {
+
         String message = tfMessage.getText().trim();
         if (!message.isEmpty()) {
             String formattedMessage = clientName + ": " + message;

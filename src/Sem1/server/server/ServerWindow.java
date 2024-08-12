@@ -18,7 +18,7 @@ public class ServerWindow extends JFrame {
     private final JButton startButton = new JButton("Start");
     private final JButton stopButton = new JButton("Stop");
     private final JTextArea log = new JTextArea();
-    private boolean isServerWorks;
+    private static boolean isServerWorks;
     private final List<ClientGUI> clients = new ArrayList<>();
 
     public ServerWindow() {
@@ -45,6 +45,8 @@ public class ServerWindow extends JFrame {
                 if (isServerWorks) {
                     isServerWorks = false;
                     appendLog("Stopping server...");
+                } else {
+                    appendLog("Server is not working");
                 }
             }
         });
@@ -54,6 +56,8 @@ public class ServerWindow extends JFrame {
                 if (!isServerWorks) {
                     isServerWorks = true;
                     appendLog("Starting server...");
+                } else {
+                    appendLog("Server is working");
                 }
             }
         });
@@ -65,21 +69,25 @@ public class ServerWindow extends JFrame {
     }
 
     private void appendLog(String message) {
+        if (!isServerWorks) return;
         log.append(message + "\n");
         log.setCaretPosition(log.getDocument().getLength());
     }
 
     public void registerClient(ClientGUI clientGUI) {
+        if (!isServerWorks) return;
         clients.add(clientGUI);
         appendLog(clientGUI.getClientName() + " connected to server");
     }
 
     public void unregisterClient(ClientGUI clientGUI) {
+        if (!isServerWorks) return;
         clients.remove(clientGUI);
         appendLog(clientGUI.getClientName() + " disconnected from server");
     }
 
     public void broadcastMessage(String message, ClientGUI clientGUI) {
+        if (!isServerWorks) return;
         for (ClientGUI client : clients) {
             if (client != clientGUI) {
                 client.receiveMessage(message);
