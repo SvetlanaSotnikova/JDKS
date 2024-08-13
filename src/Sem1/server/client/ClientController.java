@@ -1,10 +1,12 @@
 package Sem1.server.client;
 
 import Sem1.server.server.ServerController;
+import java.util.List;
 
 // work logic
 public class ClientController {
 
+    private boolean isHistoryLoad;
     private boolean connected;
     private ServerController serverController;
     private String clientName;
@@ -22,19 +24,32 @@ public class ClientController {
         return clientName;
     }
 
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
     public void connectToServer(String clientName) {
         this.clientName = clientName;
+        System.out.println("Connecting with clientName: " + clientName); // Проверка
         if (serverController.isServerRunning()) {
             serverController.registerClient(this);
             connected = true;
-            printText(clientName + " connected to server\n");
-            serverController.loadMessageFromFile();
+            String connectMessage = clientName + " connected to server\n";
+            serverController.broadcastMessage(connectMessage, null);
+            serverController.appendLog(connectMessage);
+            if (!isHistoryLoad) {
+                List<String> lines = serverController.loadMessageFromFile();
+                for (String line : lines) {
+                    printText(line);
+                }
+                isHistoryLoad = true;
+            }
         } else {
             printText(clientName + " cannot connected\n");
         }
     }
 
-    private void printText(String text) {
+    public void printText(String text) {
         if (clientView != null) {
             clientView.sendMessageToServer(text);
         } else {
@@ -72,5 +87,4 @@ public class ClientController {
         serverController.registerClient(this);
         printText("Login Successful " + clientName + "\n");
     }
-
 }

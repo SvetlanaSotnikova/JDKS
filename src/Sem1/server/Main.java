@@ -12,11 +12,12 @@ public class Main {
         ServerWindow serverWindow = new ServerWindow();
         ServerController serverController = new ServerController();
         serverWindow.setController(serverController);
+        serverController.setServerWindow(serverWindow);
 
         //создание объектов клиента1 и создание связи между ними
         ClientGUI clientGUI1 = new ClientGUI();
         ClientController clientController1 = new ClientController();
-        ServerController serverController1 = new ServerController();
+        clientController1.setClientView(clientGUI1);
         clientGUI1.setClientController(clientController1);
         clientController1.setServerController(serverController);
 

@@ -6,14 +6,9 @@
     import java.awt.*;
     import java.awt.event.ActionEvent;
     import java.awt.event.ActionListener;
-    import java.io.BufferedWriter;
-    import java.io.FileWriter;
-    import java.io.IOException;
-    import java.io.PrintWriter;
-    import java.util.ArrayList;
-    import java.util.List;
 
-    public class ServerWindow extends JFrame {
+
+    public class ServerWindow extends JFrame  {
         private static final int WINDOW_WIDTH = 555;
         private static final int WINDOW_HEIGHT = 555;
         private static final int WINDOW_POSX = 400;
@@ -74,10 +69,10 @@
             setVisible(true);
         }
 
-        private void appendLog(String message) {
+
+        public void appendLog(String message) {
             log.append(message + "\n");
             log.setCaretPosition(log.getDocument().getLength());
         }
-
 
     }

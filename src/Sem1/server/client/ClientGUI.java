@@ -1,13 +1,9 @@
 package Sem1.server.client;
 
-import Sem1.server.server.ServerController;
-import Sem1.server.server.ServerWindow;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.net.Socket;
+
 
 public class ClientGUI extends JFrame implements ClientView {
     private static final int WIDTH = 800;
@@ -60,25 +56,36 @@ public class ClientGUI extends JFrame implements ClientView {
         JScrollPane scrollPane = new JScrollPane(log);
         add(scrollPane);
 
-        btnLogin.addActionListener(e -> clientController.updateLogin(tfLogin.getText()));
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (clientController.getClientName() == null) {
+                    clientController.connectToServer(tfLogin.getText());
+                } else {
+                    if (!tfLogin.getText().equals(clientController.getClientName())) {
+                        clientController.updateLogin(tfLogin.getText());
+                    } else {
+                        appendLog("You cannot use old login");
+                    }
+                }
+            }
+        });
         btnSendMessage.addActionListener(e -> clientController.sendMessageToServer(tfMessage.getText()));
         tfMessage.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     clientController.sendMessageToServer(tfMessage.getText());
+                    tfMessage.setText("");
                 }
             }
         });
-        String clientName = tfLogin.getText();
-        if (clientController != null) {
-            clientController.connectToServer(clientName);
-        }
+
         setVisible(true);
     }
 
 
-    private void appendLog(String message) {
+    public void appendLog(String message) {
         log.append(message + "\n");
     }
 
@@ -94,12 +101,13 @@ public class ClientGUI extends JFrame implements ClientView {
 
     /**
      * Метод срабатывающий при важных событиях связанных с графическим окном (например окно в фокусе)
-     * @param e  the window event
+     *
+     * @param e the window event
      */
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
-        if (e.getID() == WindowEvent.WINDOW_CLOSING){
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             this.disconnectedFromServer();
         }
     }

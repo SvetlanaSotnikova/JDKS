@@ -1,7 +1,6 @@
 package Sem1.server.server;
 
 import Sem1.server.client.ClientController;
-import Sem1.server.client.ClientGUI;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
@@ -19,18 +18,31 @@ public class ServerController {
 
     private static boolean isServerWorks;
 
+    private ServerWindow serverWindow;
+
+    public void setServerWindow(ServerWindow serverWindow) {
+        this.serverWindow = serverWindow;
+    }
 
     public boolean isServerRunning() {
+        System.out.println("Checking if server is running: " + isServerWorks);
         return isServerWorks;
     }
+
     public void setServerWorks(boolean isServerWorks) {
         ServerController.isServerWorks = isServerWorks;
+        System.out.println("isServerWorks " + ServerController.isServerWorks);
     }
 
-    private void appendLog(String message) {
+    // мало ли пригодится
+    public void appendLog(String message) {
         if (!isServerWorks) return;
         log.append(message + "\n");
-        log.setCaretPosition(log.getDocument().getLength());
+    }
+
+    public void appendLogToServerWindow(String message) {
+        if (!isServerWorks) return;
+        serverWindow.appendLog(message);
     }
 
     public void registerClient(ClientController clientController) {
@@ -51,16 +63,17 @@ public class ServerController {
 
     public void broadcastMessage(String message, ClientController clientController) {
         if (!isServerWorks) {
-            appendLog("Cannot broadcast message, server is not working");
+            appendLogToServerWindow("Cannot broadcast message, server is not working");
             return;
         }
         for (ClientController client : clients) {
-            if (client != clientController) {
-                clientController.sendMessageToServer(message);
+            if (clientController == null || client != clientController) {
+                client.printText(message);
             }
         }
-        appendLog(message);
+        appendLogToServerWindow(message);
     }
+
 
     public void saveMessageToFile(String message, String clientName) {
         if (!isServerWorks) return;
@@ -71,14 +84,12 @@ public class ServerController {
         }
     }
 
-    public void loadMessageFromFile() {
+    public List<String> loadMessageFromFile() {
         try {
-            java.util.List<String> lines = java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LOG_FILE));
-            for (String line : lines) {
-                appendLog(line + "\n");
-            }
+            return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LOG_FILE));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
