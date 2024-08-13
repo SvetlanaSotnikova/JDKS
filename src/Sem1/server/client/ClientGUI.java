@@ -1,5 +1,6 @@
 package Sem1.server.client;
 
+import Sem1.server.server.ServerController;
 import Sem1.server.server.ServerWindow;
 
 import javax.swing.*;
@@ -8,10 +9,9 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 
-public class ClientGUI extends JFrame {
+public class ClientGUI extends JFrame implements ClientView {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    private static final String LOG_FILE = "CHAT_LOG_FILE.txt";
 
     private final JTextArea log = new JTextArea();
 
@@ -19,23 +19,27 @@ public class ClientGUI extends JFrame {
     private final JTextField tfIPAddress = new JTextField("127.0.0.1");
     private final JTextField tfPort = new JTextField("8080");
     private final JTextField tfLogin = new JTextField("admin");
-    private final JTextField tfPassword = new JTextField("admin");
+    private final JTextField tfPassword = new JTextField("*******");
     private final JButton btnLogin = new JButton("Login");
 
     private final JPanel panelBottom = new JPanel(new BorderLayout());
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSendMessage = new JButton("Send");
-    private final ServerWindow serverWindow;
 
-    private PrintWriter logWriter;
-    private BufferedReader logReader;
-    private Socket socket;
-    private String clientName;
 
-    private boolean isServerWorks;
+    private ClientController clientController;
 
-    public ClientGUI(ServerWindow serverWindow) {
-        this.serverWindow = serverWindow;
+
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
+    }
+
+
+    public ClientGUI() {
+        initUI();
+    }
+
+    private void initUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(WIDTH, HEIGHT);
@@ -56,73 +60,48 @@ public class ClientGUI extends JFrame {
         JScrollPane scrollPane = new JScrollPane(log);
         add(scrollPane);
 
-        btnLogin.addActionListener(e -> updateLogin());
-        btnSendMessage.addActionListener(e -> sendMessage());
+        btnLogin.addActionListener(e -> clientController.updateLogin(tfLogin.getText()));
+        btnSendMessage.addActionListener(e -> clientController.sendMessageToServer(tfMessage.getText()));
         tfMessage.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    sendMessage();
+                    clientController.sendMessageToServer(tfMessage.getText());
                 }
             }
-
         });
-
-        clientName = tfLogin.getText();
-        serverWindow.registerClient(this);
-        loadMessageFromFile();
+        String clientName = tfLogin.getText();
+        if (clientController != null) {
+            clientController.connectToServer(clientName);
+        }
         setVisible(true);
     }
 
-    public String getClientName() {
-        return clientName;
-    }
 
-    public void receiveMessage(String message) {
+    private void appendLog(String message) {
         log.append(message + "\n");
     }
 
-    private void updateLogin() {
-        String newName = tfLogin.getText().trim();
-        if (newName != null && !clientName.equals(newName)) {
-            serverWindow.unregisterClient(this);
-        }
-        clientName = newName;
-        serverWindow.registerClient(this);
-        log.append("Login Successful " + clientName + "\n");
+    @Override
+    public void sendMessageToServer(String message) {
+        appendLog(message);
     }
 
-    private void sendMessage() {
-
-        String message = tfMessage.getText().trim();
-        if (!message.isEmpty()) {
-            String formattedMessage = clientName + ": " + message;
-            log.append(formattedMessage + "\n");
-            serverWindow.broadcastMessage(clientName + ": " + message, this);
-            saveMessageToFile(message);
-            tfMessage.setText("");
-        }
+    @Override
+    public void disconnectedFromServer() {
+        clientController.disconnectFromServer();
     }
 
-    private void saveMessageToFile(String message) {
-        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(LOG_FILE, true)))) {
-            printWriter.println(clientName + ": " + message);
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Метод срабатывающий при важных событиях связанных с графическим окном (например окно в фокусе)
+     * @param e  the window event
+     */
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING){
+            this.disconnectedFromServer();
         }
     }
-
-    private void loadMessageFromFile() {
-        try {
-            java.util.List<String> lines = java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LOG_FILE));
-            for (String line : lines) {
-                log.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }
 
