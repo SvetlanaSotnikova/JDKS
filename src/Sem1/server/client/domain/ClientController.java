@@ -84,10 +84,11 @@ public class ClientController {
         if (!connected && !serverController.isServerRunning()) return;
         if (!clientName.equals(newName) && !newName.isEmpty()) {
             serverController.unregisterClient(this);
-            printText(clientName + " disconnected from server");
         }
+        String oldName = clientName;
         clientName = newName;
         serverController.registerClient(this);
-        printText("Login Successful " + clientName + "\n");
+        serverController.broadcastMessage(oldName + " changed name to: " + newName, this);
+        printText("Login successful changed" + clientName + "\n");
     }
 }

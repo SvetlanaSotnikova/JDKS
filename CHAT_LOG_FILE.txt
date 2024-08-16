@@ -2,4 +2,6 @@ admin2: ghbdtn
 admin1: привет
 admin2: привет, как ты?
 admin1: я окей, думаешь работает?
-admin2: уверен
+admin2: уверенadmin1: hey
+admin2: heye
+admin3: cool
