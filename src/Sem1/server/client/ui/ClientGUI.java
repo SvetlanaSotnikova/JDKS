@@ -1,6 +1,8 @@
 package Sem1.server.client.ui;
 
 import Sem1.server.client.domain.ClientController;
+import Sem1.server.theme.DarkTheme;
+import Sem1.server.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,22 +14,9 @@ public class ClientGUI extends JFrame implements ClientView {
     private static final int HEIGHT = 600;
 
     private final JTextArea log = new JTextArea();
-
-    private final JPanel panelTop = new JPanel(new GridLayout(2, 3));
-    private final JTextField tfIPAddress = new JTextField("127.0.0.1");
-    private final JTextField tfPort = new JTextField("8080");
-    private final JTextField tfLogin = new JTextField("admin");
-    private final JTextField tfPassword = new JTextField("*******");
-    private final JTextField tfMessage = new JTextField();
-
-    private final JButton btnLogin = new JButton("Login");
-    private final JButton btnSendMessage = new JButton("Send");
-    private final JPanel panelBottom = new JPanel(new BorderLayout());
-
-
+    private final Theme theme = new DarkTheme();
 
     private ClientController clientController;
-
 
     @Override
     public void setClientController(ClientController clientController) {
@@ -40,25 +29,54 @@ public class ClientGUI extends JFrame implements ClientView {
     }
 
     private void initUI() {
+
+        settings();
+
+        applyTheme();
+
+        createPanel();
+
+        setVisible(true);
+    }
+
+    private void applyTheme() {
+        theme.applyTheme(this);
+        theme.applyTheme(log);
+    }
+
+    public void createPanel() {
+        add(getHeaderPanel(), BorderLayout.NORTH);
+        add(getFooter(), BorderLayout.SOUTH);
+        add(getContentPanel());
+    }
+
+    private void settings() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(WIDTH, HEIGHT);
         setTitle("Chat Client");
+    }
 
-        panelTop.add(tfIPAddress);
-        panelTop.add(tfPort);
-        panelTop.add(tfLogin);
-        panelTop.add(tfPassword);
-        panelTop.add(btnLogin);
-        add(panelTop, BorderLayout.NORTH);
+    private Component getHeaderPanel() {
+        JPanel panelHeader = new JPanel(new GridLayout(2, 3));
+        JTextField tfIPAddress = new JTextField("127.0.0.1");
+        JTextField tfPort = new JTextField("8080");
+        JTextField tfLogin = new JTextField("admin");
+        JTextField tfPassword = new JPasswordField("*******");
 
-        panelBottom.add(tfMessage, BorderLayout.CENTER);
-        panelBottom.add(btnSendMessage, BorderLayout.EAST);
-        add(panelBottom, BorderLayout.SOUTH);
+        JButton btnLogin = new JButton("Login");
 
-        log.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(log);
-        add(scrollPane);
+        theme.applyTheme(tfIPAddress);
+        theme.applyTheme(tfPort);
+        theme.applyTheme(tfLogin);
+        theme.applyTheme(tfPassword);
+        theme.applyTheme(btnLogin);
+
+        panelHeader.add(tfIPAddress);
+        panelHeader.add(tfPort);
+        panelHeader.add(tfPassword);
+        panelHeader.add(tfLogin);
+        panelHeader.add(btnLogin);
 
         btnLogin.addActionListener(new ActionListener() {
             @Override
@@ -74,6 +92,22 @@ public class ClientGUI extends JFrame implements ClientView {
                 }
             }
         });
+        return panelHeader;
+    }
+
+    private Component getFooter() {
+        JPanel panelBottom = new JPanel(new BorderLayout());
+
+        JTextField tfMessage = new JTextField();
+
+        JButton btnSendMessage = new JButton("Send");
+
+        theme.applyThemeWthCenter(tfMessage);
+        theme.applyTheme(btnSendMessage);
+
+        panelBottom.add(tfMessage, BorderLayout.CENTER);
+        panelBottom.add(btnSendMessage, BorderLayout.EAST);
+
         btnSendMessage.addActionListener(e -> clientController.sendMessageToServer(tfMessage.getText()));
         tfMessage.addKeyListener(new KeyAdapter() {
             @Override
@@ -85,9 +119,13 @@ public class ClientGUI extends JFrame implements ClientView {
             }
         });
 
-        setVisible(true);
+        return panelBottom;
     }
 
+    private Component getContentPanel() {
+        log.setEditable(false);
+        return new JScrollPane(log);
+    }
 
     public void appendLog(String message) {
         log.append(message + "\n");

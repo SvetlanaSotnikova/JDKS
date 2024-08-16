@@ -47,6 +47,10 @@ public class ClientController {
     }
 
     public void printText(String text) {
+//        if (!serverController.isServerRunning()) {
+//            clientView.sendMessageToServer("Cannot broadcast message, server is not working");
+//            return;
+//        }
         if (clientView != null) {
             clientView.sendMessageToServer(text);
         } else {
@@ -55,7 +59,9 @@ public class ClientController {
     }
 
     public void sendMessageToServer(String message) {
-        if (!connected) return;
+        if (!connected && !serverController.isServerRunning()) {
+            return;
+        }
         if (!message.isEmpty()) {
             String formattedMessage = clientName + ": " + message;
             printText(formattedMessage);
@@ -75,7 +81,7 @@ public class ClientController {
     }
 
     public void updateLogin(String newName) {
-        if (!connected) return;
+        if (!connected && !serverController.isServerRunning()) return;
         if (!clientName.equals(newName) && !newName.isEmpty()) {
             serverController.unregisterClient(this);
             printText(clientName + " disconnected from server");
