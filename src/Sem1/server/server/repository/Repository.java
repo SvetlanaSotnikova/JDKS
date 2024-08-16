@@ -1,4 +1,10 @@
 package Sem1.server.server.repository;
 
-public interface Repository {
+import java.util.List;
+
+public interface Repository<T> {
+
+    void saveMessageToFile(T message, T clientName, T logFile);
+
+    List<T> loadMessageFromFile(T logFile);
 }

@@ -1,6 +1,8 @@
-package Sem1.server.client;
+package Sem1.server.client.domain;
 
-import Sem1.server.server.ServerController;
+import Sem1.server.client.ui.ClientView;
+import Sem1.server.server.domain.ServerController;
+
 import java.util.List;
 
 // work logic
@@ -8,24 +10,19 @@ public class ClientController {
 
     private boolean isHistoryLoad;
     private boolean connected;
-    private ServerController serverController;
+    private final ServerController serverController;
     private String clientName;
-    private ClientView clientView;
+    private final ClientView clientView;
 
-    public void setServerController(ServerController serverController) {
+
+    public ClientController(ServerController serverController, ClientView clientView) {
         this.serverController = serverController;
-    }
-
-    public void setClientView(ClientView clientView) {
         this.clientView = clientView;
+        clientView.setClientController(this);
     }
 
     public String getClientName() {
         return clientName;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
     }
 
     public void connectToServer(String clientName) {
@@ -35,7 +32,7 @@ public class ClientController {
             serverController.registerClient(this);
             connected = true;
             String connectMessage = clientName + " connected to server\n";
-            serverController.broadcastMessage(connectMessage, null);
+            serverController.broadcastMessage(connectMessage, this);
             serverController.appendLog(connectMessage);
             if (!isHistoryLoad) {
                 List<String> lines = serverController.loadMessageFromFile();

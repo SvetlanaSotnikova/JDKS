@@ -1,31 +1,16 @@
 package Sem1.server;
 
-import Sem1.server.client.ClientController;
-import Sem1.server.client.ClientGUI;
-import Sem1.server.server.ServerController;
-import Sem1.server.server.ServerWindow;
+import Sem1.server.client.domain.ClientController;
+import Sem1.server.client.ui.ClientGUI;
+import Sem1.server.server.domain.ServerController;
+import Sem1.server.server.repository.FileStorage;
+import Sem1.server.server.ui.ServerWindow;
 
 public class Main {
     public static void main(String[] args) {
+        ServerController serverController = new ServerController(new ServerWindow(), new FileStorage());
 
-        //создание объектов сервера и создание связи между ними
-        ServerWindow serverWindow = new ServerWindow();
-        ServerController serverController = new ServerController();
-        serverWindow.setController(serverController);
-        serverController.setServerWindow(serverWindow);
-
-        //создание объектов клиента1 и создание связи между ними
-        ClientGUI clientGUI1 = new ClientGUI();
-        ClientController clientController1 = new ClientController();
-        clientController1.setClientView(clientGUI1);
-        clientGUI1.setClientController(clientController1);
-        clientController1.setServerController(serverController);
-
-        //создание объектов клиента2 и создание связи между ними
-        ClientGUI clientGUI2 = new ClientGUI();
-        ClientController clientController2 = new ClientController();
-        clientController2.setClientView(clientGUI2);
-        clientGUI2.setClientController(clientController2);
-        clientController2.setServerController(serverController);
+        new ClientController(serverController, new ClientGUI());
+        new ClientController(serverController, new ClientGUI());
     }
 }

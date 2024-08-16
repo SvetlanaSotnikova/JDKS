@@ -1,6 +1,6 @@
-    package Sem1.server.server;
+    package Sem1.server.server.ui;
 
-    import Sem1.server.client.ClientGUI;
+    import Sem1.server.server.domain.ServerController;
 
     import javax.swing.*;
     import java.awt.*;
@@ -8,7 +8,7 @@
     import java.awt.event.ActionListener;
 
 
-    public class ServerWindow extends JFrame  {
+    public class ServerWindow extends JFrame implements ServerView {
         private static final int WINDOW_WIDTH = 555;
         private static final int WINDOW_HEIGHT = 555;
         private static final int WINDOW_POSX = 400;
@@ -20,9 +20,6 @@
 
         private ServerController controller;
 
-        public void setController(ServerController controller) {
-            this.controller = controller;
-        }
 
         public ServerWindow() {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,23 +40,13 @@
             stopButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (controller.isServerRunning()) {
-                        controller.setServerWorks(false);
-                        appendLog("Stopping server...");
-                    } else {
-                        appendLog("Server is not working");
-                    }
+                    controller.stopServer();
                 }
             });
             startButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (!controller.isServerRunning()) {
-                        controller.setServerWorks(true);
-                        appendLog("Starting server...");
-                    } else {
-                        appendLog("Server is working");
-                    }
+                    controller.startServer();
                 }
             });
 
@@ -70,9 +57,15 @@
         }
 
 
+        @Override
         public void appendLog(String message) {
             log.append(message + "\n");
             log.setCaretPosition(log.getDocument().getLength());
+        }
+
+        @Override
+        public void setServerController(ServerController serverController) {
+            this.controller = serverController;
         }
 
     }

@@ -1,4 +1,6 @@
-package Sem1.server.client;
+package Sem1.server.client.ui;
+
+import Sem1.server.client.domain.ClientController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +29,7 @@ public class ClientGUI extends JFrame implements ClientView {
     private ClientController clientController;
 
 
+    @Override
     public void setClientController(ClientController clientController) {
         this.clientController = clientController;
     }

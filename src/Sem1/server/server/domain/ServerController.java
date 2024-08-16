@@ -1,17 +1,16 @@
-package Sem1.server.server;
+package Sem1.server.server.domain;
 
-import Sem1.server.client.ClientController;
+import Sem1.server.client.domain.ClientController;
+import Sem1.server.server.repository.Repository;
+import Sem1.server.server.ui.ServerView;
+import Sem1.server.server.ui.ServerWindow;
 
 import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerController {
-    private final List<ClientController> clients = new ArrayList<>();
+    private final List<ClientController> clients;
     private final JTextArea log = new JTextArea();
 
     private static final String LOG_FILE = "CHAT_LOG_FILE.txt";
@@ -19,9 +18,14 @@ public class ServerController {
     private static boolean isServerWorks;
 
     private ServerWindow serverWindow;
+    private Repository<String> repository;
+    private ServerView serverView;
 
-    public void setServerWindow(ServerWindow serverWindow) {
-        this.serverWindow = serverWindow;
+    public ServerController(ServerView serverView, Repository<String> repository) {
+        this.serverView = serverView;
+        this.repository = repository;
+        serverView.setServerController(this);
+        clients = new ArrayList<>();
     }
 
     public boolean isServerRunning() {
@@ -38,11 +42,6 @@ public class ServerController {
     public void appendLog(String message) {
         if (!isServerWorks) return;
         log.append(message + "\n");
-    }
-
-    public void appendLogToServerWindow(String message) {
-        if (!isServerWorks) return;
-        serverWindow.appendLog(message);
     }
 
     public void registerClient(ClientController clientController) {
@@ -63,7 +62,7 @@ public class ServerController {
 
     public void broadcastMessage(String message, ClientController clientController) {
         if (!isServerWorks) {
-            appendLogToServerWindow("Cannot broadcast message, server is not working");
+            serverView.appendLog("Cannot broadcast message, server is not working");
             return;
         }
         for (ClientController client : clients) {
@@ -71,25 +70,38 @@ public class ServerController {
                 client.printText(message);
             }
         }
-        appendLogToServerWindow(message);
+        serverView.appendLog(message);
     }
 
+
+    public void startServer() {
+        if (!isServerWorks) {
+            setServerWorks(true);
+            serverView.appendLog("Server started");
+        } else {
+            serverView.appendLog("Server is already running");
+        }
+    }
+
+    public void stopServer() {
+        if (isServerWorks) {
+            setServerWorks(false);
+            serverView.appendLog("Server stopped");
+        } else {
+            serverView.appendLog("Server is already stopped");
+        }
+    }
 
     public void saveMessageToFile(String message, String clientName) {
         if (!isServerWorks) return;
-        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(LOG_FILE, true)))) {
-            printWriter.println(clientName + ": " + message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        repository.saveMessageToFile(message, clientName, LOG_FILE);
     }
 
     public List<String> loadMessageFromFile() {
-        try {
-            return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(LOG_FILE));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return repository.loadMessageFromFile(LOG_FILE);
+    }
+
+    public ServerWindow getServerWindow() {
+        return serverWindow;
     }
 }
