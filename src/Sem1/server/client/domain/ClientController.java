@@ -10,8 +10,9 @@ public class ClientController {
 
     private boolean isHistoryLoad;
     private boolean connected;
-    private final ServerController serverController;
     private String clientName;
+
+    private final ServerController serverController;
     private final ClientView clientView;
 
 

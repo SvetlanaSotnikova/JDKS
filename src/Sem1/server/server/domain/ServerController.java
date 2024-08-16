@@ -12,14 +12,13 @@ import java.util.List;
 public class ServerController {
     private final List<ClientController> clients;
     private final JTextArea log = new JTextArea();
+    private final Repository<String> repository;
+    private final ServerView serverView;
 
-    private static final String LOG_FILE = "CHAT_LOG_FILE.txt";
+    private static final String LOG_FILE = "src/Sem1/server/server/repository/CHAT_LOG_FILE.txt";
 
     private static boolean isServerWorks;
 
-    private ServerWindow serverWindow;
-    private Repository<String> repository;
-    private ServerView serverView;
 
     public ServerController(ServerView serverView, Repository<String> repository) {
         this.serverView = serverView;
@@ -99,9 +98,5 @@ public class ServerController {
 
     public List<String> loadMessageFromFile() {
         return repository.loadMessageFromFile(LOG_FILE);
-    }
-
-    public ServerWindow getServerWindow() {
-        return serverWindow;
     }
 }
