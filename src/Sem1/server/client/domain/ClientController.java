@@ -47,10 +47,6 @@ public class ClientController {
     }
 
     public void printText(String text) {
-//        if (!serverController.isServerRunning()) {
-//            clientView.sendMessageToServer("Cannot broadcast message, server is not working");
-//            return;
-//        }
         if (clientView != null) {
             clientView.sendMessageToServer(text);
         } else {

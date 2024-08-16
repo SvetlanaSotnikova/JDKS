@@ -14,7 +14,7 @@ public class ComparatorArrays {
             return false;
         }
         for (int i = 0; i < a.length; i++) {
-            if (!a[i].equals(b[i])) {
+            if (!a[i].getClass().equals(b[i].getClass())) {
                 return false;
             }
         }
