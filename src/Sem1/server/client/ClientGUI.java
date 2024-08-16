@@ -16,11 +16,12 @@ public class ClientGUI extends JFrame implements ClientView {
     private final JTextField tfPort = new JTextField("8080");
     private final JTextField tfLogin = new JTextField("admin");
     private final JTextField tfPassword = new JTextField("*******");
-    private final JButton btnLogin = new JButton("Login");
-
-    private final JPanel panelBottom = new JPanel(new BorderLayout());
     private final JTextField tfMessage = new JTextField();
+
+    private final JButton btnLogin = new JButton("Login");
     private final JButton btnSendMessage = new JButton("Send");
+    private final JPanel panelBottom = new JPanel(new BorderLayout());
+
 
 
     private ClientController clientController;

@@ -60,7 +60,7 @@ public class ClientController {
     public void sendMessageToServer(String message) {
         if (!connected) return;
         if (!message.isEmpty()) {
-            String formattedMessage = clientName + ": " + message + "\n";
+            String formattedMessage = clientName + ": " + message;
             printText(formattedMessage);
             serverController.broadcastMessage(clientName + ": " + message, this);
             serverController.saveMessageToFile(message, clientName);
