@@ -13,5 +13,5 @@ public interface Theme {
 
     void applyTheme(JButton button);
 
-    void applyThemeWthCenter(JTextField textField);
+    void applyThemeNoCenter(JTextField textField);
 }

@@ -18,24 +18,14 @@ public class ClientGUI extends JFrame implements ClientView {
 
     private ClientController clientController;
 
-    @Override
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
-    }
-
-
     public ClientGUI() {
         initUI();
     }
 
     private void initUI() {
-
         settings();
-
         applyTheme();
-
         createPanel();
-
         setVisible(true);
     }
 
@@ -102,7 +92,7 @@ public class ClientGUI extends JFrame implements ClientView {
 
         JButton btnSendMessage = new JButton("Send");
 
-        theme.applyThemeWthCenter(tfMessage);
+        theme.applyThemeNoCenter(tfMessage);
         theme.applyTheme(btnSendMessage);
 
         panelBottom.add(tfMessage, BorderLayout.CENTER);
@@ -139,6 +129,11 @@ public class ClientGUI extends JFrame implements ClientView {
     @Override
     public void disconnectedFromServer() {
         clientController.disconnectFromServer();
+    }
+
+    @Override
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
     }
 
     /**

@@ -38,7 +38,7 @@ public class DarkTheme implements Theme {
     }
 
     @Override
-    public void applyThemeWthCenter(JTextField textField) {
+    public void applyThemeNoCenter(JTextField textField) {
         textField.setBackground(backgroundColor);
         textField.setForeground(textColor);
     }

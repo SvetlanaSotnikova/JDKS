@@ -21,6 +21,9 @@ public class Calculator {
     }
 
     public static <T extends Number, U extends Number> double divide(T a, U b) {
+        if (b.doubleValue() == 0) {
+            throw new ArithmeticException("Divide by zero");
+        }
         return a.doubleValue() / b.doubleValue();
     }
 
