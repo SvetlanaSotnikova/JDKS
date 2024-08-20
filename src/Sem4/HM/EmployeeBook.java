@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EmployeeBook {
-    private static final List<Employee> employees = new ArrayList<Employee>();
+    private static final List<Employee> employees = new ArrayList<>();
 
     public void add(Employee e) {
         employees.add(e);
